@@ -1,4 +1,4 @@
-module sudoku
+module github.com/aptrik/sudoku
 
 go 1.13
 

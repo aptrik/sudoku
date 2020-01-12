@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
-	"sudoku/solver"
+	"github.com/aptrik/sudoku/solver"
 )
 
 func init() {
