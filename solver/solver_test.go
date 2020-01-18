@@ -77,6 +77,47 @@ func Test_Solve(t *testing.T) {
 	})
 }
 
+func Test_Hardest(t *testing.T) {
+	const (
+		hardest = `
++-------+-------+-------+
+| 8 0 0 | 0 0 0 | 0 0 0 |
+| 0 0 3 | 6 0 0 | 0 0 0 |
+| 0 7 0 | 0 9 0 | 2 0 0 |
++-------+-------+-------+
+| 0 5 0 | 0 0 7 | 0 0 0 |
+| 0 0 0 | 0 4 5 | 7 0 0 |
+| 0 0 0 | 1 0 0 | 0 3 0 |
++-------+-------+-------+
+| 0 0 1 | 0 0 0 | 0 6 8 |
+| 0 0 8 | 5 0 0 | 0 1 0 |
+| 0 9 0 | 0 0 0 | 4 0 0 |
++-------+-------+-------+`
+		hardestSolution = `
++-------+-------+-------+
+| 8 1 2 | 7 5 3 | 6 4 9 |
+| 9 4 3 | 6 8 2 | 1 7 5 |
+| 6 7 5 | 4 9 1 | 2 8 3 |
++-------+-------+-------+
+| 1 5 4 | 2 3 7 | 8 9 6 |
+| 3 6 9 | 8 4 5 | 7 2 1 |
+| 2 8 7 | 1 6 9 | 5 3 4 |
++-------+-------+-------+
+| 5 2 1 | 9 7 4 | 3 6 8 |
+| 4 3 8 | 5 2 6 | 9 1 7 |
+| 7 9 6 | 3 1 8 | 4 5 2 |
++-------+-------+-------+`
+	)
+	t.Run("solve", func(t *testing.T) {
+		board, _ := NewBoard(hardest)
+		solution, _ := NewBoard(hardestSolution)
+		got, _ := board.Solve()
+		if !reflect.DeepEqual(got, solution) {
+			t.Errorf("solve() got %v, want %v", got, solution)
+		}
+	})
+}
+
 func Benchmark_Solve(b *testing.B) {
 	// Benchmark_Solve-8   	   57832	     17580 ns/op
 	for n := 0; n < b.N; n++ {
