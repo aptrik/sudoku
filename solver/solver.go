@@ -2,7 +2,6 @@ package solver
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -43,15 +42,10 @@ func (board Board) String() string {
 	return builder.String()
 }
 
+// Solve will return a solution to the puzzle.
 func (board *Board) Solve() (*Board, error) {
-	// solution := new(Board)
-	// for i := range board {
-	// 	for j := range board {
-	// 		solution[i][j] = board[i][j]
-	// 	}
-	// }
 	solution := board
-	solution.Backtrack()
+	solution.backtrack()
 	return solution, nil
 }
 
@@ -60,7 +54,7 @@ func NewBoard(input string) (*Board, error) {
 	return NewBoardFrom(strings.NewReader(input))
 }
 
-// New create a new Sudoku board from io.Reader.
+// NewBoardFrom create a new Sudoku board from io.Reader.
 func NewBoardFrom(input io.Reader) (*Board, error) {
 	board := new(Board)
 	row := 0
@@ -93,6 +87,7 @@ func NewBoardFrom(input io.Reader) (*Board, error) {
 	return board, nil
 }
 
+// Valid return true if the board is valid.
 func (board *Board) Valid() (bool, error) {
 	for row := 0; row < boardSize; row++ {
 		counter := make(map[int]int)
@@ -101,7 +96,7 @@ func (board *Board) Valid() (bool, error) {
 			if number > 0 {
 				counter[number]++
 				if counter[number] > 1 {
-					return false, errors.New(fmt.Sprintf("number %d is duplicated on row %d", number, row+1))
+					return false, fmt.Errorf("number %d is duplicated on row %d", number, row+1)
 				}
 			}
 		}
@@ -115,7 +110,7 @@ func (board *Board) Valid() (bool, error) {
 			if number > 0 {
 				counter[number]++
 				if counter[number] > 1 {
-					return false, errors.New(fmt.Sprintf("number %d is duplicated in column %d", number, column+1))
+					return false, fmt.Errorf("number %d is duplicated in column %d", number, column+1)
 				}
 			}
 		}
@@ -132,7 +127,7 @@ func (board *Board) Valid() (bool, error) {
 						counter[number]++
 						if counter[number] > 1 {
 							region := fmt.Sprintf("%dx%d", i+1, j+1)
-							return false, errors.New(fmt.Sprintf("number %d is duplicated in region %s", number, region))
+							return false, fmt.Errorf("number %d is duplicated in region %s", number, region)
 						}
 					}
 				}
@@ -153,7 +148,7 @@ func validCell(value string) (int, error) {
 	return digit, nil
 }
 
-func (board *Board) Backtrack() bool {
+func (board *Board) backtrack() bool {
 	row, column, solved := board.findEmptyCell()
 	if solved {
 		return true
@@ -161,7 +156,7 @@ func (board *Board) Backtrack() bool {
 	for number := 1; number <= boardSize; number++ {
 		if board.isDigitValid(row, column, number) {
 			board[row][column] = number
-			if board.Backtrack() {
+			if board.backtrack() {
 				// solution found
 				return true
 			}

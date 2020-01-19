@@ -1,6 +1,7 @@
 package solver
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -73,6 +74,56 @@ func Test_Solve(t *testing.T) {
 		}
 		if !reflect.DeepEqual(got, solution) {
 			t.Errorf("solve() got %v, want %v", got, solution)
+		}
+	})
+}
+
+func Test_Valid(t *testing.T) {
+	t.Run("duplicate on row 1", func(t *testing.T) {
+		board, _ := NewBoard(`
+1 1 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0`)
+		if valid, err := board.Valid(); valid && err != nil {
+			t.Errorf("expected duplicate number error")
+		}
+	})
+	t.Run("duplicate on row 2", func(t *testing.T) {
+		board, _ := NewBoard(`
+0 1 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0`)
+		fmt.Printf("%q\n", board)
+		if valid, err := board.Valid(); valid && err != nil {
+			t.Errorf("expected duplicate number error")
+		}
+	})
+	t.Run("duplicate in region 3", func(t *testing.T) {
+		board, _ := NewBoard(`
+0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0`)
+		fmt.Printf("%q\n", board)
+		if valid, err := board.Valid(); valid && err != nil {
+			t.Errorf("expected duplicate number error")
 		}
 	})
 }
