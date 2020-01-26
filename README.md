@@ -6,7 +6,7 @@
 
 ## Release
 
-    go build -ldflags "-X main.buildTime=$(date --iso-8601=seconds) -X main.gitHash=$(git rev-parse HEAD)"
+    make build
 
 ## Update Go dependencies
 
