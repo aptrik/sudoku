@@ -155,7 +155,7 @@ func TestSolve_Hardest(t *testing.T) {
 }
 
 func BenchmarkSolve(b *testing.B) {
-	// Benchmark_Solve-8   	   57832	     17580 ns/op
+	// BenchmarkSolve-8   	   89318	     12965 ns/op	       0 B/op	       0 allocs/op
 	for n := 0; n < b.N; n++ {
 		board := problem1
 		board.Solve()
