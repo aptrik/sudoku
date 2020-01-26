@@ -43,20 +43,20 @@ func (board Board) String() string {
 }
 
 // Solve will return a solution to the puzzle.
-func (board *Board) Solve() (*Board, error) {
-	solution := board
+func (board *Board) Solve() (Board, error) {
+	solution := *board
 	solution.backtrack()
 	return solution, nil
 }
 
 // NewBoard create a new Sudoku board from a string.
-func NewBoard(input string) (*Board, error) {
+func NewBoard(input string) (Board, error) {
 	return NewBoardFrom(strings.NewReader(input))
 }
 
 // NewBoardFrom create a new Sudoku board from io.Reader.
-func NewBoardFrom(input io.Reader) (*Board, error) {
-	board := new(Board)
+func NewBoardFrom(input io.Reader) (Board, error) {
+	board := Board{}
 	row := 0
 	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
@@ -88,7 +88,7 @@ func NewBoardFrom(input io.Reader) (*Board, error) {
 }
 
 // Valid return true if the board is valid.
-func (board *Board) Valid() (bool, error) {
+func (board Board) Valid() (bool, error) {
 	for row := 0; row < boardSize; row++ {
 		counter := make(map[int]int)
 		for column := 0; column < boardSize; column++ {
