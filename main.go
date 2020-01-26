@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/aptrik/sudoku/cmd"
+	"os"
 )
 
 var (
@@ -10,5 +11,7 @@ var (
 )
 
 func main() {
-	cmd.Execute(buildTime, gitHash)
+	if err := cmd.Execute(buildTime, gitHash); err != nil {
+		os.Exit(1)
+	}
 }
