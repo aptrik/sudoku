@@ -21,16 +21,16 @@ var (
 	}
 )
 
-// Execute executes the root command.
-func Execute(bTime, gHash string) error {
-	buildTime = bTime
-	gitHash = gHash
-	return rootCmd.Execute()
-}
-
 func init() {
 	logrus.SetLevel(logrus.InfoLevel)
 	// logrus.SetReportCaller(true)
 
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
+}
+
+// Execute executes the root command.
+func Execute(bTime, gHash string) error {
+	buildTime = bTime
+	gitHash = gHash
+	return rootCmd.Execute()
 }

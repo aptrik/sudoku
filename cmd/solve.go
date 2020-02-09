@@ -3,9 +3,11 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+	"time"
+
 	"github.com/aptrik/sudoku/solver"
+	"github.com/spf13/cobra"
 )
 
 func init() {
@@ -16,7 +18,7 @@ var solveCmd = &cobra.Command{
 	Use:   "solve",
 	Short: "Solve puzzle",
 	Run: func(cmd *cobra.Command, args []string) {
-		solveF := func(filename string)  {
+		solveF := func(filename string) {
 			f, _ := os.Open(filename)
 			//noinspection GoUnhandledErrorResult
 			defer f.Close()
@@ -28,9 +30,11 @@ var solveCmd = &cobra.Command{
 			}
 			fmt.Printf("Problem %q:\n", filename)
 			fmt.Println(board)
+			start := time.Now()
 			solution, _ := board.Solve()
+			elapsed := time.Since(start)
 			fmt.Println()
-			fmt.Printf("Solution to %q:\n", filename)
+			fmt.Printf("Solution to %q (elapse time: %v):\n", filename, elapsed)
 			fmt.Println(solution)
 			fmt.Println()
 		}
