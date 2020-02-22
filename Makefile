@@ -1,4 +1,4 @@
-all: clean test build
+all: clean build test
 
 clean:
 	rm -f ./sudoku
