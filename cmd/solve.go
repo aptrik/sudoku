@@ -29,13 +29,13 @@ var solveCmd = &cobra.Command{
 				os.Exit(1)
 			}
 			fmt.Printf("Problem %q:\n", filename)
-			fmt.Println(board)
+			fmt.Print(board)
 			start := time.Now()
 			solution, _ := board.Solve()
 			elapsed := time.Since(start)
 			fmt.Println()
-			fmt.Printf("Solution to %q (elapse time: %v):\n", filename, elapsed)
-			fmt.Println(solution)
+			fmt.Printf("Solution in %v:\n", elapsed)
+			fmt.Print(solution)
 			fmt.Println()
 		}
 		for _, filename := range args {

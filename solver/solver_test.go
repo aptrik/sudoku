@@ -2,7 +2,6 @@ package solver
 
 import (
 	"reflect"
-	"strings"
 	"testing"
 )
 
@@ -18,21 +17,6 @@ var (
 		{9, 6, 0, 1, 2, 5, 7, 0, 0},
 		{0, 0, 0, 0, 6, 8, 9, 5, 0},
 	}
-	problem1Pretty = strings.TrimSpace(`
-+-------+-------+-------+
-| · · 5 | · · · | 4 · 9 |
-| · · · | 6 · 1 | 3 · 8 |
-| · 3 · | 2 · · | 1 · 5 |
-+-------+-------+-------+
-| 5 · 4 | · 1 · | 6 · · |
-| 2 7 · | · · · | · 4 · |
-| 1 8 · | · 4 7 | · 9 3 |
-+-------+-------+-------+
-| 7 · · | · 3 9 | · 1 6 |
-| 9 6 · | 1 2 5 | 7 · · |
-| · · · | · 6 8 | 9 5 · |
-+-------+-------+-------+
-`)
 	solution1 = Board{
 		{6, 1, 5, 8, 7, 3, 4, 2, 9},
 		{4, 2, 9, 6, 5, 1, 3, 7, 8},
@@ -70,77 +54,58 @@ var (
 
 func TestBoardString(t *testing.T) {
 	got := problem1.String()
-	if got != problem1Pretty {
-		t.Errorf("wrong string representation, got %v, want %v", got, problem1Pretty)
+	want := `0 0 5 0 0 0 4 0 9
+0 0 0 6 0 1 3 0 8
+0 3 0 2 0 0 1 0 5
+5 0 4 0 1 0 6 0 0
+2 7 0 0 0 0 0 4 0
+1 8 0 0 4 7 0 9 3
+7 0 0 0 3 9 0 1 6
+9 6 0 1 2 5 7 0 0
+0 0 0 0 6 8 9 5 0
+`
+	if got != want {
+		t.Errorf("wrong string representation, got %v, want %v", got, want)
 	}
 }
 
 func TestBoardNewBoard(t *testing.T) {
-	got, _ := NewBoard("\n" + problem1Pretty + "\n")
+	input := problem1.String()
+	got, err := NewBoard(input)
+	if err != nil {
+		t.Errorf("error when creating board %v; got error %v", input, err)
+	}
 	if !reflect.DeepEqual(got, problem1) {
 		t.Errorf("wrong string representation, got %v, want %v", got, problem1)
+	}
+}
+
+func TestBoardNewBoardInvalid(t *testing.T) {
+	input := `
+0 x 5 0 0 0 4 0 9
+0 0 0 6 0 1 3 0 8
+0 3 0 2 0 0 1 0 5
+5 0 4 0 1 0 6 0 0
+2 7 0 0 0 0 0 4 0
+1 8 0 0 4 7 0 9 3
+7 0 0 0 3 9 0 1 6
+9 6 0 1 2 5 7 0 0
+0 0 0 0 6 8 9 5 0
+`
+	_, err := NewBoard(input)
+	if err == nil {
+		t.Errorf("board input should not be valid: %v", input)
 	}
 }
 
 func TestBoardSolve(t *testing.T) {
 	t.Run("solve", func(t *testing.T) {
 		got, _ := problem1.Solve()
-		if valid, err := got.Valid(); !valid || err != nil {
-			t.Errorf("solution is not valid(), got %v, error %v", valid, err)
-		}
+		// if valid, err := got.Valid(); !valid || err != nil {
+		// 	t.Errorf("solution is not valid(), got %v, error %v", valid, err)
+		// }
 		if !reflect.DeepEqual(got, solution1) {
 			t.Errorf("solve() got\n%v\n, want\n%v", got, solution1)
-		}
-	})
-}
-
-func TestBoardValid(t *testing.T) {
-	t.Run("duplicate on row 1", func(t *testing.T) {
-		board := Board{
-			{1, 1, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		}
-		if valid, err := board.Valid(); valid && err != nil {
-			t.Errorf("expected duplicate number error")
-		}
-	})
-	t.Run("duplicate on row 2", func(t *testing.T) {
-		board := Board{
-			{0, 1, 0, 0, 0, 0, 0, 0, 0},
-			{0, 1, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		}
-		if valid, err := board.Valid(); valid && err != nil {
-			t.Errorf("expected duplicate number error")
-		}
-	})
-	t.Run("duplicate in region 3", func(t *testing.T) {
-		board := Board{
-			{0, 0, 0, 0, 0, 0, 1, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		}
-		if valid, err := board.Valid(); valid && err != nil {
-			t.Errorf("expected duplicate number error")
 		}
 	})
 }
