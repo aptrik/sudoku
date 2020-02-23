@@ -27,13 +27,6 @@ func (board Board) String() string {
 	return builder.String()
 }
 
-// Solve will return a solution to the puzzle.
-func (board *Board) Solve() (Board, error) {
-	solution := *board
-	solution.backtrack()
-	return solution, nil
-}
-
 // NewBoard create a new Sudoku board from a string.
 func NewBoard(input string) (Board, error) {
 	return NewBoardFrom(strings.NewReader(input))
@@ -42,6 +35,16 @@ func NewBoard(input string) (Board, error) {
 // NewBoardFrom create a new Sudoku board from io.Reader.
 func NewBoardFrom(input io.Reader) (Board, error) {
 	board := Board{}
+	validCell := func(value string) (int, error) {
+		digit, err := strconv.Atoi(value)
+		if err != nil || digit < 0 || digit > len(board) {
+			return 0, fmt.Errorf(
+				"only digits from 1 to %d and 0 are allowed values; not %q",
+				len(board), value)
+		}
+		return digit, nil
+	}
+
 	row := 0
 	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
@@ -52,7 +55,7 @@ func NewBoardFrom(input io.Reader) (Board, error) {
 		}
 		column := 0
 		for _, value := range columns {
-			i, err := board.validCell(value)
+			i, err := validCell(value)
 			if err != nil {
 				return board, err
 			}
@@ -70,14 +73,14 @@ func NewBoardFrom(input io.Reader) (Board, error) {
 	return board, nil
 }
 
-func (board *Board) validCell(value string) (int, error) {
-	digit, err := strconv.Atoi(value)
-	if err != nil || digit < 0 || digit > len(board) {
-		return 0, fmt.Errorf(
-			"only digits from 1 to %d and 0 are allowed values; not %q",
-			len(board), value)
+// Solve will return a solution to the puzzle.
+func (board *Board) Solve() (Board, error) {
+	puzzle := *board
+	if err := puzzle.Valid(); err != nil {
+		return puzzle, err
 	}
-	return digit, nil
+	puzzle.backtrack()
+	return puzzle, nil
 }
 
 func (board *Board) backtrack() bool {
@@ -89,10 +92,9 @@ func (board *Board) backtrack() bool {
 		if board.isPossible(row, column, number) {
 			board[row][column] = number
 			if board.backtrack() {
-				return true // solution found
+				return true // first solution found
 			}
-			// failure, reset and try something else
-			board[row][column] = 0
+			board[row][column] = 0 // failure, try another number
 		}
 	}
 	return false
@@ -109,15 +111,68 @@ func (board *Board) findEmptyCell() (int, int) {
 	return -1, -1
 }
 
-func (board *Board) isPossible(row, column, digit int) bool {
+func (board *Board) isPossible(row, column, number int) bool {
 	startRow := row / 3 * 3
 	startColumn := column / 3 * 3
 	for i := 0; i < len(board); i++ {
-		if board[row][i] == digit ||
-			board[i][column] == digit ||
-			board[startRow+i/3][startColumn+i%3] == digit {
+		if board[row][i] == number ||
+			board[i][column] == number ||
+			board[startRow+i/3][startColumn+i%3] == number {
 			return false
 		}
 	}
 	return true
+}
+
+// Valid checks if the board is a valid puzzle.
+func (board *Board) Valid() error {
+	// Check all rows
+	for row := 0; row < len(board); row++ {
+		counter := make(map[int]int)
+		for column := 0; column < len(board); column++ {
+			number := board[row][column]
+			if number > 0 {
+				counter[number]++
+				if counter[number] > 1 {
+					return fmt.Errorf("number %d is duplicated in row %d", number, row+1)
+				}
+			}
+		}
+	}
+
+	// Check all columns
+	for column := 0; column < len(board); column++ {
+		counter := make(map[int]int)
+		for row := 0; row < len(board); row++ {
+			number := board[row][column]
+			if number > 0 {
+				counter[number]++
+				if counter[number] > 1 {
+					return fmt.Errorf("number %d is duplicated in column %d", number, column+1)
+				}
+			}
+		}
+	}
+
+	// Check all regions
+	for i := 0; i < len(board); i += 3 {
+		for j := 0; j < len(board); j += 3 {
+			counter := make(map[int]int)
+			for row := i; row < i+3; row++ {
+				for column := j; column < j+3; column++ {
+					number := board[row][column]
+					if number > 0 {
+						counter[number]++
+						if counter[number] > 1 {
+							region := fmt.Sprintf("%dx%d", (row+3)/3, (column+3)/3)
+							return fmt.Errorf(
+								"number %d is duplicated in region %s (row %d, column %d)",
+								number, region, row+1, column+1)
+						}
+					}
+				}
+			}
+		}
+	}
+	return nil
 }

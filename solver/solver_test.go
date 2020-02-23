@@ -98,14 +98,73 @@ func TestBoardNewBoardInvalid(t *testing.T) {
 	}
 }
 
+func TestBoardValid(t *testing.T) {
+	t.Run("duplicate on row 1", func(t *testing.T) {
+		board := Board{
+			{1, 1, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		}
+		if err := board.Valid(); err == nil {
+			t.Errorf("expected duplicate number error")
+		}
+	})
+	t.Run("duplicate on row 2", func(t *testing.T) {
+		board := Board{
+			{0, 1, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		}
+		if err := board.Valid(); err == nil {
+			t.Errorf("expected duplicate number error")
+		}
+	})
+	t.Run("duplicate in region 3", func(t *testing.T) {
+		board := Board{
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 1, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 1, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
+		}
+		if err := board.Valid(); err == nil {
+			t.Errorf("expected duplicate number error")
+		}
+	})
+}
+
 func TestBoardSolve(t *testing.T) {
 	t.Run("solve", func(t *testing.T) {
-		got, _ := problem1.Solve()
-		// if valid, err := got.Valid(); !valid || err != nil {
-		// 	t.Errorf("solution is not valid(), got %v, error %v", valid, err)
-		// }
-		if !reflect.DeepEqual(got, solution1) {
-			t.Errorf("solve() got\n%v\n, want\n%v", got, solution1)
+		got, err := problem1.Solve()
+		if err != nil && !reflect.DeepEqual(got, solution1) {
+			t.Errorf("solve() got %v, want %v (error %v)", got, solution1, err)
+		}
+	})
+}
+
+func TestBoardSolveInvalid(t *testing.T) {
+	t.Run("solve invalid board", func(t *testing.T) {
+		puzzle := problem1
+		puzzle[0][0] = 5
+		_, err := puzzle.Solve()
+		if err == nil {
+			t.Errorf("invalid board should not be solved: %v", puzzle)
 		}
 	})
 }

@@ -28,15 +28,20 @@ var solveCmd = &cobra.Command{
 				fmt.Printf("Unable to create board from input: %s\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("Problem %q:\n", filename)
+			fmt.Printf("*** Problem %q:\n", filename)
 			fmt.Print(board)
+			fmt.Println()
 			start := time.Now()
-			solution, _ := board.Solve()
+			solution, err := board.Solve()
 			elapsed := time.Since(start)
-			fmt.Println()
-			fmt.Printf("Solution in %v:\n", elapsed)
-			fmt.Print(solution)
-			fmt.Println()
+			if err != nil {
+				fmt.Printf("!!! Error: %v", err)
+				fmt.Println()
+			} else {
+				fmt.Printf("+++ Solution in %v:\n", elapsed)
+				fmt.Print(solution)
+				fmt.Println()
+			}
 		}
 		for _, filename := range args {
 			solveF(filename)
