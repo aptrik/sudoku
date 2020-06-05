@@ -19,9 +19,9 @@
 
 ## Usage
 
-`sudoku solve puzzle1.txt`
+`./sudoku solve puzzle1.txt`
 
-    Problem "puzzle1.txt":
+    *** Problem "puzzle1.txt":
     0 0 5 0 0 0 4 0 9
     0 0 0 6 0 1 3 0 8
     0 3 0 2 0 0 1 0 5
@@ -32,7 +32,7 @@
     9 6 0 1 2 5 7 0 0
     0 0 0 0 6 8 9 5 0
 
-    Solution in 18.936µs:
+    +++ Solution in 52.924µs:
     6 1 5 8 7 3 4 2 9
     4 2 9 6 5 1 3 7 8
     8 3 7 2 9 4 1 6 5
