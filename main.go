@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/aptrik/sudoku/cmd"
 	"os"
+
+	"github.com/aptrik/sudoku/cmd"
 )
 
 var (

@@ -182,6 +182,9 @@ func BenchmarkSolve(b *testing.B) {
 	// BenchmarkSolve-8   	   89318	     12965 ns/op	       0 B/op	       0 allocs/op
 	for n := 0; n < b.N; n++ {
 		board := problem1
-		board.Solve()
+		_, err := board.Solve()
+		if err != nil {
+			b.Errorf("solve() returned error %v", err)
+		}
 	}
 }
